@@ -1,14 +1,32 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import InputPanel from "./components/InputPanel"
+import SandboxRenderer from "./components/SandboxRenderer"
+import { scanHtml } from "./utils/scanHtml"
 
 function App() {
   const [receivedHtml, setReveivedHtml] = useState('')
-  const [scanned, setScanned] = useState(false)
+  const [hasScanned, setHasScanned] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [violations, setViolations] = useState([]);
+  const [scanError, setScanError] = useState(null);
 
   function handleScan(html) {
     setReveivedHtml(html)
-    setScanned(true)
+    setHasScanned(true)
+    setIsScanning(true)
+    setViolations([])
+    setScanError(null)
   }
+
+
+  const handleDocReady = useCallback(async (doc) => {
+    console.log('called');
+    const response = await scanHtml(doc.documentElement);
+    console.log('violations found:', response.violations.length, response.violations);
+    setViolations(response.violations)
+    setScanError(response.error)
+    setIsScanning(false)
+  }, [])
 
   return (
     <div>
@@ -17,15 +35,33 @@ function App() {
         <p>Find accessibility problems and understand how to fix them.</p>
       </header>
       <main>
+
         <section>
           <h2>Your HTML</h2>
           <InputPanel onScan={handleScan} />
         </section>
 
+        {receivedHtml && (<SandboxRenderer html={receivedHtml} onReady={handleDocReady} />)}
+
         <section>
           <h2>Result</h2>
-          {scanned ? <p>{receivedHtml}</p> : <p>Results will appear here after you scan</p>}
+          {!hasScanned && <p>Results will appear here after you scan</p>}
+          {isScanning && <p>Scanning...</p>}
+          {scanError && <p role="alert">{scanError}</p>}
+          {!isScanning && !scanError && hasScanned && violations.length === 0 && <p>No issues found</p>}
+          {!isScanning && violations.length > 0 && (
+            <ul>
+              {violations.map((v) => (
+                <li key={v.id}>
+                  <strong>{v.id}</strong> — {v.impact}
+                  <p>{v.help}</p>
+                  <code>{v.nodes[0]?.html}</code>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
+
       </main>
     </div>
   )
