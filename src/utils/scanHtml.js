@@ -1,21 +1,5 @@
-// export async function scanHtml(doc) {
-
-//     try {
-//         const results = await axe.run(doc);
-//         return {
-//             violations: results.violations, error: null
-//         };
-//     } catch (error) {
-//         console.error("axe-core scan failed:", error);
-//         console.error("message:", error.message);
-//         console.error("stack:", error.stack);
-//         return {
-//             violations: [], error: 'Something went wrong.'
-//         };
-//     } 
-// }
-
 export async function scanHtml(iframe) {
+
     try {
         if (!iframe || !iframe.contentWindow) {
             return { violations: [], error: 'Preview frame is not ready yet.' };

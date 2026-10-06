@@ -20,9 +20,7 @@ function App() {
 
 
   const handleDocReady = useCallback(async (doc) => {
-    console.log('called');
-    const response = await scanHtml(doc.documentElement);
-    console.log('violations found:', response.violations.length, response.violations);
+    const response = await scanHtml(doc);
     setViolations(response.violations)
     setScanError(response.error)
     setIsScanning(false)
