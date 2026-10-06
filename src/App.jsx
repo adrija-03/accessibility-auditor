@@ -4,14 +4,14 @@ import SandboxRenderer from "./components/SandboxRenderer"
 import { scanHtml } from "./utils/scanHtml"
 
 function App() {
-  const [receivedHtml, setReveivedHtml] = useState('')
+  const [receivedHtml, setReceivedHtml] = useState('')
   const [hasScanned, setHasScanned] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [violations, setViolations] = useState([]);
   const [scanError, setScanError] = useState(null);
 
   function handleScan(html) {
-    setReveivedHtml(html)
+    setReceivedHtml(html)
     setHasScanned(true)
     setIsScanning(true)
     setViolations([])
