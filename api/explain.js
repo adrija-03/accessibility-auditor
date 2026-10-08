@@ -1,4 +1,4 @@
-const MODELS = ['gemini-3.8-flash', 'gemini-3.8-flash-lite']; // fallback list
+const MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash']; // fallback list
 const MAX_RETRIES = 3;
 
 function sleep(ms) {
