@@ -1,26 +1,26 @@
 //with error
-export const sampleHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Sample Page</title>
-</head>
-<body>
-  <h1>Welcome to my shop</h1>
-  <h4>Our best products</h4>
+// export const sampleHtml = `<!DOCTYPE html>
+// <html lang="en">
+// <head>
+//   <title>Sample Page</title>
+// </head>
+// <body>
+//   <h1>Welcome to my shop</h1>
+//   <h4>Our best products</h4>
 
-  <img src="logo.png">
+//   <img src="logo.png">
 
-  <button></button>
+//   <button></button>
 
-  <form>
-    <input type="text" placeholder="Enter your email">
-  </form>
+//   <form>
+//     <input type="text" placeholder="Enter your email">
+//   </form>
 
-  <p style="color: #cccccc; background: #ffffff;">
-    Limited time offer. Buy now!
-  </p>
-</body>
-</html>`;
+//   <p style="color: #cccccc; background: #ffffff;">
+//     Limited time offer. Buy now!
+//   </p>
+// </body>
+// </html>`;
 
 //with no error
 // export const sampleHtml = `<!DOCTYPE html>
@@ -48,3 +48,15 @@ export const sampleHtml = `<!DOCTYPE html>
 //   </main>
 // </body>
 // </html>`;
+
+//
+export const sampleHtml = `<!DOCTYPE html>
+<html lang="en">
+<head><title>Attack test</title></head>
+<body>
+  <script>alert('script ran')</script>
+  <img src="x" onerror="alert('onerror ran')">
+  <a href="javascript:alert('link ran')">Click</a>
+  <h1>Hello</h1>
+</body>
+</html>`;

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react"
 import axeScript from 'axe-core/axe.min.js?raw';
+import DOMPurify from "dompurify";
 
 function SandboxRenderer({ html, onReady }) {
     const iframeRef = useRef(null);
@@ -10,8 +11,10 @@ function SandboxRenderer({ html, onReady }) {
         const iframe = iframeRef.current;
         const doc = iframe.contentDocument || iframe.contentWindow.document;
 
+        const cleanHtml = DOMPurify.sanitize(html, {WHOLE_DOCUMENT: true})
+
         const htmlWithAxe = `
-          ${html}
+          ${cleanHtml}
           <script>${axeScript}</script>
         `;
 
