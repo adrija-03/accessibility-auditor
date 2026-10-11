@@ -13,21 +13,25 @@ function App() {
   const [isScanning, setIsScanning] = useState(false);
   const [violations, setViolations] = useState([]);
   const [scanError, setScanError] = useState(null);
+  const [scanId, setScanId] = useState(0)
 
   //for ai
   const [explanations, setExplanations] = useState({});
   const [aiError, setAiError] = useState(null);
+  const [aiEnabled, setAiEnabled] = useState(false);
 
-  function handleScan(html) {
+  function handleScan(html, wantsAI) {
     setReceivedHtml(html)
     setHasScanned(true)
     setIsScanning(true)
     setViolations([])
     setScanError(null)
+    setScanId((id) => id + 1)
 
     //for ai
     setExplanations({})
     setAiError(null)
+    setAiEnabled(wantsAI)
   }
 
   //for ai
@@ -37,14 +41,14 @@ function App() {
     setViolations(response.violations)
     setScanError(response.error)
 
-    if (response.violations.length > 0) {
+    if (aiEnabled && response.violations.length > 0) {
       const result = await explainAllWithAI(response.violations);
       setExplanations(result.explanations);
       setAiError(result.error);
     }
 
     setIsScanning(false)
-  }, [])
+  }, [aiEnabled])
 
   const score = calculateScore(violations)
   const showResults = hasScanned && !isScanning && !scanError
@@ -65,7 +69,7 @@ function App() {
         </section>
 
         {receivedHtml && (
-          <SandboxRenderer html={receivedHtml} onReady={handleDocReady} />
+          <SandboxRenderer key={scanId} html={receivedHtml} onReady={handleDocReady} />
         )}
 
         <section aria-labelledby="results-heading">
@@ -76,7 +80,9 @@ function App() {
           )}
 
           {isScanning && (
-            <p role="status">Scanning and generating explanations...</p>
+            <p role="status">
+              {aiEnabled ? 'Scanning and generating explanations...' : 'Scanning...'}
+            </p>
           )}
 
           {scanError && (
@@ -101,7 +107,7 @@ function App() {
               )}
 
               {violations.length > 0 && (
-                <ViolationsList violations={violations} explanations={explanations} />
+                <ViolationsList violations={violations} explanations={explanations} aiEnabled={aiEnabled} />
               )}
             </>
           )}

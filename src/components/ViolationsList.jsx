@@ -1,6 +1,6 @@
 import ViolationCard from './ViolationCard'
 
-function ViolationsList({ violations, explanations }) {
+function ViolationsList({ violations, explanations, aiEnabled }) {
   console.log(violations)
   return (
     <ul>
@@ -9,6 +9,7 @@ function ViolationsList({ violations, explanations }) {
           <ViolationCard
             violation={v}
             explanation={explanations[v.id]}
+            aiEnabled={aiEnabled}
           />
         </li>
       ))}

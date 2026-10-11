@@ -9,7 +9,7 @@ const SEVERITY_STYLES = {
 
 const MAX_SNIPPETS = 3
 
-function ViolationCard({ violation, explanation }) {
+function ViolationCard({ violation, explanation, aiEnabled }) {
   const [copied, setCopied] = useState(false);
 
   const severityStyle = SEVERITY_STYLES[violation.impact] ?? SEVERITY_STYLES.minor;
@@ -85,7 +85,11 @@ function ViolationCard({ violation, explanation }) {
           )}
         </section>
       ) : (
-        <p className="mb-4 text-sm italic text-gray-700">AI explanation unavailable.</p>
+        <p className="mb-4 text-sm italic text-gray-700">
+          {aiEnabled
+            ? 'AI explanation unavailable.'
+            : 'AI explanations are off. Tick "Generate AI explanations" and scan again to get plain-English fixes.'}
+        </p>
       )}
 
       <a
