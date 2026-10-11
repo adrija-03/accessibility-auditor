@@ -12,7 +12,19 @@ export async function scanHtml(iframe) {
         }
 
         const results = await axeInFrame.run(iframe.contentDocument);
-        return { violations: results.violations, error: null };
+
+        const severityOrder = {
+            critical: 1,
+            serious: 2,
+            moderate: 3,
+            minor: 4
+        }
+
+        const sortedViolations = [...results.violations].sort(
+            (a,b) => severityOrder[a.impact] - severityOrder[b.impact]
+        );
+
+        return { violations: sortedViolations, error: null };
     } catch (error) {
         console.error("axe-core scan failed:", error);
         return { violations: [], error: 'Something went wrong.' };
