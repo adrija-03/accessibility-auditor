@@ -30,7 +30,7 @@ function SandboxRenderer({ html, onReady }) {
             <iframe
                 ref={iframeRef}
                 title="HTML Preview"
-                className='absolute -left-[9999px] w-[1000px] h-[800px]'></iframe>
+                className='absolute left-[-9999px] w-250 h-200'></iframe>
         </div>
     )
 }

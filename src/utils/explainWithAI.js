@@ -5,7 +5,8 @@ export async function explainAllWithAI(violations) {
             id: v.id,
             help: v.help,
             description: v.description,
-            html: v.nodes[0]?.html || 'not available',
+            affectedCount: v.nodes.length,
+            htmlSnippets: v.nodes.slice(0, 3).map((n) => n.html),
         }));
 
         const response = await fetch('/api/explain', {

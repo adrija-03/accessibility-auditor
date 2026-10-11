@@ -55,6 +55,13 @@ You are an accessibility expert helping a junior developer.
 Below is a list of accessibility violations found on a web page.
 For EACH one, explain it in simple, plain English.
 
+Each violation has these fields:
+- "id": the rule name
+- "help": a short title for the rule
+- "description": what the rule checks
+- "affectedCount": the total number of broken elements on the page
+- "htmlSnippets": up to 3 examples of the broken HTML
+
 Violations:
 ${JSON.stringify(violations, null, 2)}
 
@@ -67,6 +74,12 @@ The keys must be the "id" values from the list above, and each value must have t
     "fixedCode": "the corrected HTML snippet"
   }
 }
+
+Rules for the fixedCode field:
+- Fix ALL of the elements shown in "htmlSnippets" together, not just the first one.
+- For landmark rules (region, landmark-one-main), wrap ALL page content inside a single <main> element.
+- Keep the code short and use realistic example values (for example, a meaningful alt text instead of a placeholder).
+- The fixedCode value must be a plain string of HTML, not an object or array.
 `;
 
         const data = await callGemini(prompt);
