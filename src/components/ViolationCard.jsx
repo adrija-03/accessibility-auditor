@@ -53,13 +53,15 @@ function ViolationCard({ violation, explanation, aiEnabled }) {
         </span>
       </div>
 
-      {/* Broken Elements Section */}
       <section className="mb-4 space-y-2">
         <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
           Broken element{nodeCount > 1 ? 's' : ''}
         </h4>
         {shownNodes.map((node, index) => (
-          <pre key={index} className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50 p-3 font-mono text-xs text-gray-800 dark:border-gray-700/60 dark:bg-gray-950 dark:text-gray-200">
+          <pre
+            key={index}
+            className="overflow-x-auto rounded-lg border border-gray-800 bg-[#1e1e1e] p-3 font-mono text-xs text-[#ce9178] shadow-inner"
+          >
             <code>{node.html}</code>
           </pre>
         ))}
@@ -70,7 +72,6 @@ function ViolationCard({ violation, explanation, aiEnabled }) {
         )}
       </section>
 
-      {/* AI Explanation Section */}
       {explanation ? (
         <section className="mb-4 space-y-3 rounded-xl border border-blue-100 bg-blue-50/50 p-4 dark:border-blue-900/30 dark:bg-blue-950/10">
           <div>
@@ -105,9 +106,11 @@ function ViolationCard({ violation, explanation, aiEnabled }) {
                   <span aria-live="polite">{copied ? 'Copied!' : 'Copy Fix'}</span>
                 </button>
               </div>
-              <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-3 font-mono text-xs text-emerald-700 dark:border-gray-700 dark:bg-gray-900 dark:text-emerald-400">
+
+              <pre className="overflow-x-auto rounded-lg border border-gray-800 bg-[#1e1e1e] p-3 font-mono text-xs text-[#4ec9b0] shadow-inner">
                 <code>{explanation.fixedCode}</code>
               </pre>
+
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 AI-suggested fix. Review before using.
               </p>
@@ -122,7 +125,6 @@ function ViolationCard({ violation, explanation, aiEnabled }) {
         </p>
       )}
 
-      {/* Learn More Link */}
       {violation.helpUrl && (
         <a
           href={violation.helpUrl}

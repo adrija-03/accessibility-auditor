@@ -84,7 +84,6 @@ function App() {
     <div className="min-h-screen bg-gray-50 text-gray-950 transition-colors duration-200 dark:bg-gray-950 dark:text-gray-50">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
 
-        {/* Top Header & Theme Toggle Bar */}
         <header className="mb-8 flex items-center justify-between border-b border-gray-200 pb-6 dark:border-gray-800">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
@@ -98,7 +97,6 @@ function App() {
         </header>
 
         <main className="space-y-8">
-          {/* Input Section */}
           <section aria-labelledby="input-heading" className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <h2 id="input-heading" className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
               Your Input Source
@@ -111,8 +109,6 @@ function App() {
               <SandboxRenderer key={scanId} html={receivedHtml} onReady={handleDocReady} />
             </div>
           )}
-
-          {/* Results Section */}
           <section aria-labelledby="results-heading" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 id="results-heading" className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">

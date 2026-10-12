@@ -20,7 +20,6 @@ function ThemeToggle() {
         className={`pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${isDark ? 'translate-x-5' : 'translate-x-0'
           }`}
       >
-        {/* Optional: Add icons inside the thumb if you like */}
         <span
           className={`absolute inset-0 flex h-full w-full items-center justify-center transition-opacity ${isDark ? 'opacity-0 duration-100 ease-out' : 'opacity-100 duration-200 ease-in'
             }`}
