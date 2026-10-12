@@ -18,8 +18,6 @@ function App() {
   const [scanId, setScanId] = useState(0)
   const [isFetching, setIsFetching] = useState(false)
   const [scanInfo, setScanInfo] = useState(null)
-
-  //for ai
   const [explanations, setExplanations] = useState({});
   const [aiError, setAiError] = useState(null);
   const [aiEnabled, setAiEnabled] = useState(false);

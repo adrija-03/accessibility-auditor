@@ -1,6 +1,5 @@
 export async function explainAllWithAI(violations) {
     try {
-        // send only what the AI needs, keeps the request small
         const trimmed = violations.map((v) => ({
             id: v.id,
             help: v.help,
