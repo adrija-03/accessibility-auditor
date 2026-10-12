@@ -81,75 +81,103 @@ function App() {
   const showResults = hasScanned && !isScanning && !scanError
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold">AccessiScan</h1>
-        <p className="text-gray-700">
-          Find accessibility problems and understand how to fix them.
-        </p>
-      </header>
-      <ThemeToggle/>
+    <div className="min-h-screen bg-gray-50 text-gray-950 transition-colors duration-200 dark:bg-gray-950 dark:text-gray-50">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
 
-      <main>
-        <section aria-labelledby="input-heading" className="mb-8">
-          <h2 id="input-heading" className="mb-2 text-xl font-semibold">Your HTML</h2>
-          <InputPanel onScan={handleScan} disabled={isScanning} />
-        </section>
-
-        {receivedHtml && (
-          <SandboxRenderer key={scanId} html={receivedHtml} onReady={handleDocReady} />
-        )}
-
-        <section aria-labelledby="results-heading">
-          <h2 id="results-heading" className="mb-2 text-xl font-semibold">Results</h2>
-
-          {!hasScanned && (
-            <p>Results will appear here after you scan.</p>
-          )}
-
-          {isScanning && (
-            <p role="status">
-              {isFetching
-                ? 'Fetching the page...'
-                : aiEnabled ? 'Scanning and generating explanations...' : 'Scanning...'}
+        {/* Top Header & Theme Toggle Bar */}
+        <header className="mb-8 flex items-center justify-between border-b border-gray-200 pb-6 dark:border-gray-800">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+              AccessiScan
+            </h1>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Find accessibility problems and understand how to fix them.
             </p>
+          </div>
+          <ThemeToggle />
+        </header>
+
+        <main className="space-y-8">
+          {/* Input Section */}
+          <section aria-labelledby="input-heading" className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+            <h2 id="input-heading" className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+              Your Input Source
+            </h2>
+            <InputPanel onScan={handleScan} disabled={isScanning} />
+          </section>
+
+          {receivedHtml && (
+            <div>
+              <SandboxRenderer key={scanId} html={receivedHtml} onReady={handleDocReady} />
+            </div>
           )}
 
-          {scanError && (
-            <p role="alert" className="rounded border border-red-300 bg-red-50 p-3 text-red-900">
-              {scanError}
-            </p>
-          )}
+          {/* Results Section */}
+          <section aria-labelledby="results-heading" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 id="results-heading" className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Audit Results
+              </h2>
+            </div>
 
-          {showResults && (
-            <>
-
-              {scanInfo && scanInfo.source !== 'Pasted HTML' && (
-                <p className="mb-4 text-sm text-gray-700">
-                  Note: URL scans analyze the page's raw HTML only. Content built by JavaScript is not
-                  included, so scores for web apps can be too high.
+            {!hasScanned && (
+              <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center dark:border-gray-700 dark:bg-gray-900/50">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Results will appear here after you run a scan.
                 </p>
-              )}
-              <ScoreCard score={score} violations={violations} />
+              </div>
+            )}
 
-              {violations.length === 0 && (
-                <p className="mt-4">No issues found. Nice work!</p>
-              )}
+            {isScanning && (
+              <div role="status" className="flex items-center justify-center gap-3 rounded-2xl border border-blue-100 bg-blue-50/50 p-6 text-blue-700 dark:border-blue-900/30 dark:bg-blue-950/20 dark:text-blue-300">
+                <svg className="h-5 w-5 animate-spin text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span className="text-sm font-medium">
+                  {isFetching
+                    ? 'Fetching the page...'
+                    : aiEnabled ? 'Scanning and generating explanations...' : 'Scanning...'}
+                </span>
+              </div>
+            )}
 
-              {aiError && (
-                <p role="alert" className="my-4 rounded border border-amber-300 bg-amber-50 p-3 text-amber-900">
-                  AI explanations are unavailable right now ({aiError}). The issues below
-                  are still accurate.
-                </p>
-              )}
+            {scanError && (
+              <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-900 shadow-sm dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
+                {scanError}
+              </div>
+            )}
 
-              {violations.length > 0 && (
-                <ViolationsList violations={violations} explanations={explanations} aiEnabled={aiEnabled} />
-              )}
-            </>
-          )}
-        </section>
-      </main>
+            {showResults && (
+              <div className="space-y-6">
+                {scanInfo && scanInfo.source !== 'Pasted HTML' && (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-300">
+                    <span className="font-semibold">Note:</span> URL scans analyze the page's raw HTML only. Content built by JavaScript is not included, so scores for web apps can be too high.
+                  </div>
+                )}
+
+                <ScoreCard score={score} violations={violations} />
+
+                {violations.length === 0 && (
+                  <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center text-emerald-800 dark:border-emerald-900/40 dark:bg-emerald-950/30 dark:text-emerald-300">
+                    <p className="font-semibold">No issues found. Nice work!</p>
+                  </div>
+                )}
+
+                {aiError && (
+                  <div role="alert" className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 shadow-sm dark:border-amber-900/40 dark:bg-amber-950/30 dark:text-amber-300">
+                    AI explanations are unavailable right now ({aiError}). The issues below are still accurate.
+                  </div>
+                )}
+
+                {violations.length > 0 && (
+                  <ViolationsList violations={violations} explanations={explanations} aiEnabled={aiEnabled} />
+                )}
+              </div>
+            )}
+          </section>
+        </main>
+      </div>
     </div>
   )
 
