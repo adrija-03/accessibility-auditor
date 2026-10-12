@@ -6,6 +6,7 @@ import { explainAllWithAI } from "./utils/explainWithAI"
 import { calculateScore } from "./utils/calculateScore"
 import ScoreCard from "./components/ScoreCard"
 import ViolationsList from "./components/ViolationsList"
+import { fetchHtmlFromUrl } from "./utils/fetchHtmlFromUrl"
 
 function App() {
   const [receivedHtml, setReceivedHtml] = useState('')
@@ -14,32 +15,58 @@ function App() {
   const [violations, setViolations] = useState([]);
   const [scanError, setScanError] = useState(null);
   const [scanId, setScanId] = useState(0)
+  const [isFetching, setIsFetching] = useState(false)
+  const [scanInfo, setScanInfo] = useState(null)
 
   //for ai
   const [explanations, setExplanations] = useState({});
   const [aiError, setAiError] = useState(null);
   const [aiEnabled, setAiEnabled] = useState(false);
 
-  function handleScan(html, wantsAI) {
-    setReceivedHtml(html)
+  async function handleScan({ source, value, wantsAI }) {
     setHasScanned(true)
     setIsScanning(true)
     setViolations([])
-    setScanError(null)
-    setScanId((id) => id + 1)
-
-    //for ai
     setExplanations({})
+    setScanError(null)
     setAiError(null)
+    setScanInfo(null)
     setAiEnabled(wantsAI)
+
+    let html = value
+    let sourceLabel = 'Pasted HTML'
+
+    if (source === 'url') {
+      try {
+        setIsFetching(true)
+        const data = await fetchHtmlFromUrl(value)
+        html = data.html
+        sourceLabel = data.finalUrl
+      } catch (error) {
+        setScanError(error.message)
+        setIsScanning(false)
+        return
+      } finally {
+        setIsFetching(false)
+      }
+    }
+
+    setScanInfo({ source: sourceLabel })
+    setReceivedHtml(html)
+    setScanId((id) => id + 1)
   }
 
-  //for ai
   const handleDocReady = useCallback(async (iframe) => {
 
     const response = await scanHtml(iframe);
     setViolations(response.violations)
     setScanError(response.error)
+    setScanInfo((info) => ({
+      ...info,
+      title: iframe.contentDocument?.title || '(no title)',
+      passesCount: response.passesCount,
+      incompleteCount: response.incompleteCount,
+    }))
 
     if (aiEnabled && response.violations.length > 0) {
       const result = await explainAllWithAI(response.violations);
@@ -65,7 +92,7 @@ function App() {
       <main>
         <section aria-labelledby="input-heading" className="mb-8">
           <h2 id="input-heading" className="mb-2 text-xl font-semibold">Your HTML</h2>
-          <InputPanel onScan={handleScan} />
+          <InputPanel onScan={handleScan} disabled={isScanning} />
         </section>
 
         {receivedHtml && (
@@ -81,7 +108,9 @@ function App() {
 
           {isScanning && (
             <p role="status">
-              {aiEnabled ? 'Scanning and generating explanations...' : 'Scanning...'}
+              {isFetching
+                ? 'Fetching the page...'
+                : aiEnabled ? 'Scanning and generating explanations...' : 'Scanning...'}
             </p>
           )}
 
@@ -89,6 +118,15 @@ function App() {
             <p role="alert" className="rounded border border-red-300 bg-red-50 p-3 text-red-900">
               {scanError}
             </p>
+          )}
+
+          {scanInfo && (
+            <dl className="mb-4 rounded border border-gray-300 p-3 text-sm">
+              <div className="flex gap-2"><dt className="font-medium">Source:</dt><dd className="break-all">{scanInfo.source}</dd></div>
+              <div className="flex gap-2"><dt className="font-medium">Page title:</dt><dd>{scanInfo.title}</dd></div>
+              <div className="flex gap-2"><dt className="font-medium">Checks passed:</dt><dd>{scanInfo.passesCount}</dd></div>
+              <div className="flex gap-2"><dt className="font-medium">Needs manual review:</dt><dd>{scanInfo.incompleteCount}</dd></div>
+            </dl>
           )}
 
           {showResults && (
@@ -116,59 +154,6 @@ function App() {
     </div>
   )
 
-  //for without ai
-  // const handleDocReady = useCallback(async (doc) => {
-  //   const response = await scanHtml(doc);
-  //   // const score = calculateScore(response.violations)
-  //   // console.log(score)
-  //   setViolations(response.violations)
-  //   setScanError(response.error)
-  //   setIsScanning(false)
-  // }, [])
-
-  // const score = calculateScore(violations)
-  // const showResults = hasScanned && !isScanning && !scanError
-  // return (
-  //   <div>
-  //     <header>
-  //       <h1>AccessiScan</h1>
-  //       <p>Find accessibility problems and understand how to fix them.</p>
-  //     </header>
-  //     <main>
-
-  //       <section>
-  //         <h2>Your HTML</h2>
-  //         <InputPanel onScan={handleScan} />
-  //       </section>
-
-  //       {receivedHtml && (<SandboxRenderer html={receivedHtml} onReady={handleDocReady} />)}
-
-  //       <section>
-  //         <h2>Result</h2>
-  //         {!hasScanned && <p>Results will appear here after you scan</p>}
-  //         {isScanning && <p>Scanning...</p>}
-  //         {scanError && <p role="alert">{scanError}</p>}
-  //         {!isScanning && !scanError && hasScanned && violations.length === 0 && <p>No issues found</p>}
-  //         {!isScanning && violations.length > 0 && (
-  //           <ul>
-  //             {violations.map((v) => (
-  //               <li key={v.id}>
-  //                 <strong>{v.id}</strong> — {v.impact}
-  //                 <p>{v.help}</p>
-  //                 <code>{v.nodes[0]?.html}</code>
-  //               </li>
-  //             ))}
-  //           </ul>
-  //         )}
-  //         {showResults && <ScoreCard score={score}/>}
-  //         {violations.length > 0 && <ViolationsList violations= {violations}/>}
-  //       </section>
-
-
-
-  //     </main>
-  //   </div>
-  // )
 }
 
 export default App

@@ -21,12 +21,22 @@ export async function scanHtml(iframe) {
         }
 
         const sortedViolations = [...results.violations].sort(
-            (a,b) => severityOrder[a.impact] - severityOrder[b.impact]
+            (a, b) => severityOrder[a.impact] - severityOrder[b.impact]
         );
 
-        return { violations: sortedViolations, error: null };
+        return {
+            violations: sortedViolations,
+            passesCount: results.passes.length,
+            incompleteCount: results.incomplete.length,
+            error: null,
+        };
     } catch (error) {
         console.error("axe-core scan failed:", error);
-        return { violations: [], error: 'Something went wrong.' };
+        return {
+            violations: [],
+            passesCount: 0,
+            incompleteCount: 0,
+            error: 'Something went wrong.'
+        };
     }
 }
