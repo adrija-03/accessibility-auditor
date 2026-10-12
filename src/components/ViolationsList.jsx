@@ -1,7 +1,7 @@
 import ViolationCard from './ViolationCard'
 
 function ViolationsList({ violations, explanations, aiEnabled }) {
-  console.log(violations)
+
   return (
     <ul>
       {violations.map((v) => (

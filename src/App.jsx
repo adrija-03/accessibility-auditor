@@ -57,8 +57,7 @@ function App() {
   }
 
   const handleDocReady = useCallback(async (iframe) => {
-
-    const response = await scanHtml(iframe);
+    const response = await scanHtml(iframe)
     setViolations(response.violations)
     setScanError(response.error)
     setScanInfo((info) => ({
@@ -69,9 +68,9 @@ function App() {
     }))
 
     if (aiEnabled && response.violations.length > 0) {
-      const result = await explainAllWithAI(response.violations);
-      setExplanations(result.explanations);
-      setAiError(result.error);
+      const result = await explainAllWithAI(response.violations)
+      setExplanations(result.explanations)
+      setAiError(result.error)
     }
 
     setIsScanning(false)
@@ -120,17 +119,15 @@ function App() {
             </p>
           )}
 
-          {scanInfo && (
-            <dl className="mb-4 rounded border border-gray-300 p-3 text-sm">
-              <div className="flex gap-2"><dt className="font-medium">Source:</dt><dd className="break-all">{scanInfo.source}</dd></div>
-              <div className="flex gap-2"><dt className="font-medium">Page title:</dt><dd>{scanInfo.title}</dd></div>
-              <div className="flex gap-2"><dt className="font-medium">Checks passed:</dt><dd>{scanInfo.passesCount}</dd></div>
-              <div className="flex gap-2"><dt className="font-medium">Needs manual review:</dt><dd>{scanInfo.incompleteCount}</dd></div>
-            </dl>
-          )}
-
           {showResults && (
             <>
+
+              {scanInfo && scanInfo.source !== 'Pasted HTML' && (
+                <p className="mb-4 text-sm text-gray-700">
+                  Note: URL scans analyze the page's raw HTML only. Content built by JavaScript is not
+                  included, so scores for web apps can be too high.
+                </p>
+              )}
               <ScoreCard score={score} violations={violations} />
 
               {violations.length === 0 && (
