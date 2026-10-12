@@ -1,6 +1,6 @@
 export async function fetchHtmlFromUrl(rawUrl) {
     let url = rawUrl.trim()
-    if (!/^https?:\/\//i.test(url)) url = `https://${url}`
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(url)) url = `https://${url}`
 
     const response = await fetch('/api/fetch-html', {
         method: 'POST',
@@ -12,5 +12,5 @@ export async function fetchHtmlFromUrl(rawUrl) {
     if (!response.ok) {
         throw new Error(data.error || 'Could not fetch that page.')
     }
-    return data 
+    return data
 }
