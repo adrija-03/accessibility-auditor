@@ -7,6 +7,7 @@ import { calculateScore } from "./utils/calculateScore"
 import ScoreCard from "./components/ScoreCard"
 import ViolationsList from "./components/ViolationsList"
 import { fetchHtmlFromUrl } from "./utils/fetchHtmlFromUrl"
+import ThemeToggle from "./components/ThemeToggle"
 
 function App() {
   const [receivedHtml, setReceivedHtml] = useState('')
@@ -87,6 +88,7 @@ function App() {
           Find accessibility problems and understand how to fix them.
         </p>
       </header>
+      <ThemeToggle/>
 
       <main>
         <section aria-labelledby="input-heading" className="mb-8">
