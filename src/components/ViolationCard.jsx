@@ -1,10 +1,10 @@
 import { useState } from "react"
 
 const SEVERITY_STYLES = {
-  critical: 'bg-red-100 text-red-900 border-red-300',
-  serious: 'bg-orange-100 text-orange-900 border-orange-300',
-  moderate: 'bg-yellow-100 text-yellow-900 border-yellow-300',
-  minor: 'bg-blue-100 text-blue-900 border-blue-300',
+  critical: 'bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-900/50',
+  serious: 'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/40 dark:text-orange-400 dark:border-orange-900/50',
+  moderate: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/40 dark:text-yellow-400 dark:border-yellow-900/50',
+  minor: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/50',
 }
 
 const MAX_SNIPPETS = 3
@@ -28,78 +28,111 @@ function ViolationCard({ violation, explanation, aiEnabled }) {
   }
 
   return (
-    <article className="rounded-lg border border-gray-300 p-4">
-      <header className="mb-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-lg font-semibold">{violation.help}</h3>
-          <span className={`rounded border px-2 py-0.5 text-sm font-medium ${severityStyle}`}>
+    <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+      <header className="mb-3 space-y-1.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 sm:text-lg">
+            {violation.help}
+          </h3>
+          <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide ${severityStyle}`}>
             {violation.impact}
           </span>
         </div>
-        <p className="text-sm text-gray-700">Rule: {violation.id}</p>
+        <p className="text-xs font-mono text-gray-500 dark:text-gray-400">
+          Rule ID: <span className="text-gray-700 dark:text-gray-300">{violation.id}</span>
+        </p>
       </header>
 
-      <p className="mb-3">{violation.description}</p>
-
-      <p className="mb-3 text-sm font-medium">
-        {nodeCount} {nodeCount === 1 ? 'element' : 'elements'} affected
+      <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">
+        {violation.description}
       </p>
 
-      <section className="mb-4">
-        <h4 className="font-medium">Broken element{nodeCount > 1 ? 's' : ''}</h4>
+      <div className="mb-3 flex items-center justify-between">
+        <span className="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-800 dark:bg-gray-800 dark:text-gray-200">
+          {nodeCount} {nodeCount === 1 ? 'element' : 'elements'} affected
+        </span>
+      </div>
+
+      {/* Broken Elements Section */}
+      <section className="mb-4 space-y-2">
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          Broken element{nodeCount > 1 ? 's' : ''}
+        </h4>
         {shownNodes.map((node, index) => (
-          <pre key={index} className="my-1 overflow-x-auto rounded bg-gray-100 p-2 text-sm">
+          <pre key={index} className="overflow-x-auto rounded-lg border border-gray-200 bg-gray-50 p-3 font-mono text-xs text-gray-800 dark:border-gray-700/60 dark:bg-gray-950 dark:text-gray-200">
             <code>{node.html}</code>
           </pre>
         ))}
         {hiddenCount > 0 && (
-          <p className="text-sm text-gray-700">+ {hiddenCount} more</p>
+          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+            + {hiddenCount} more element{hiddenCount > 1 ? 's' : ''} hidden
+          </p>
         )}
       </section>
 
+      {/* AI Explanation Section */}
       {explanation ? (
-        <section className="mb-4 rounded bg-gray-50 p-3">
-          <h4 className="font-medium">In simple words</h4>
-          <p className="mb-2">{explanation.explanation}</p>
+        <section className="mb-4 space-y-3 rounded-xl border border-blue-100 bg-blue-50/50 p-4 dark:border-blue-900/30 dark:bg-blue-950/10">
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-900 dark:text-blue-300">
+              In simple words
+            </h4>
+            <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+              {explanation.explanation}
+            </p>
+          </div>
 
-          <h4 className="font-medium">Who it affects</h4>
-          <p className="mb-2">{explanation.whoItAffects}</p>
+          <div>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-900 dark:text-blue-300">
+              Who it affects
+            </h4>
+            <p className="mt-1 text-sm text-gray-700 dark:text-gray-300">
+              {explanation.whoItAffects}
+            </p>
+          </div>
 
           {explanation.fixedCode && (
-            <>
+            <div className="space-y-2 pt-2">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium">Suggested fix</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-900 dark:text-blue-300">
+                  Suggested fix
+                </h4>
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="rounded border border-gray-400 px-2 py-1 text-sm hover:bg-gray-200"
+                  className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                 >
-                  <span aria-live="polite">{copied ? 'Copied!' : 'Copy'}</span>
+                  <span aria-live="polite">{copied ? 'Copied!' : 'Copy Fix'}</span>
                 </button>
               </div>
-              <pre className="my-1 overflow-x-auto rounded bg-gray-100 p-2 text-sm">
+              <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-3 font-mono text-xs text-emerald-700 dark:border-gray-700 dark:bg-gray-900 dark:text-emerald-400">
                 <code>{explanation.fixedCode}</code>
               </pre>
-              <p className="text-sm text-gray-700">AI-suggested fix. Review before using.</p>
-            </>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                AI-suggested fix. Review before using.
+              </p>
+            </div>
           )}
         </section>
       ) : (
-        <p className="mb-4 text-sm italic text-gray-700">
+        <p className="mb-4 text-xs italic text-gray-500 dark:text-gray-400">
           {aiEnabled
             ? 'AI explanation unavailable.'
             : 'AI explanations are off. Tick "Generate AI explanations" and scan again to get plain-English fixes.'}
         </p>
       )}
 
-      <a
-        href={violation.helpUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="text-sm text-blue-800 underline"
-      >
-        Learn more about this rule
-      </a>
+      {/* Learn More Link */}
+      {violation.helpUrl && (
+        <a
+          href={violation.helpUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-2"
+        >
+          Learn more about this rule
+        </a>
+      )}
     </article>
   )
 }
