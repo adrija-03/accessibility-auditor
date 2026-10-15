@@ -11,7 +11,7 @@ function SandboxRenderer({ html, onReady }) {
         const iframe = iframeRef.current;
         const doc = iframe.contentDocument || iframe.contentWindow.document;
 
-        const cleanHtml = DOMPurify.sanitize(html, {WHOLE_DOCUMENT: true})
+        const cleanHtml = DOMPurify.sanitize(html, { WHOLE_DOCUMENT: true })
 
         const htmlWithAxe = `
           ${cleanHtml}
@@ -22,7 +22,7 @@ function SandboxRenderer({ html, onReady }) {
         doc.write(htmlWithAxe);
         doc.close();
 
-        onReady(iframe); 
+        onReady(iframe);
     }, [html]);
 
     return (
@@ -30,7 +30,11 @@ function SandboxRenderer({ html, onReady }) {
             <iframe
                 ref={iframeRef}
                 title="HTML Preview"
-                className='absolute left-[-9999px] w-250 h-200'></iframe>
+                tabIndex={-1}
+                aria-hidden="true"
+                sandbox="allow-same-origin allow-scripts"
+                className='absolute left-[-9999px] w-250 h-200'
+            />
         </div>
     )
 }

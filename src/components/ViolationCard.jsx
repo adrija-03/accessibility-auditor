@@ -27,6 +27,9 @@ function ViolationCard({ violation, explanation, aiEnabled }) {
     }
   }
 
+  const focusRing =
+    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-950'
+
   return (
     <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
       <header className="mb-3 space-y-1.5">
@@ -101,7 +104,8 @@ function ViolationCard({ violation, explanation, aiEnabled }) {
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                  className={`rounded border ... ${focusRing}`}
+                  aria-label={`Copy suggested fix for ${violation.id}`}
                 >
                   <span aria-live="polite">{copied ? 'Copied!' : 'Copy Fix'}</span>
                 </button>
@@ -130,9 +134,10 @@ function ViolationCard({ violation, explanation, aiEnabled }) {
           href={violation.helpUrl}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-2"
+          className={`text-sm underline ... ${focusRing}`}
         >
           Learn more about this rule
+          <span className="sr-only"> (opens in a new tab)</span>
         </a>
       )}
     </article>

@@ -1,5 +1,22 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
+
 body {
   @apply bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100;
+}
+
+:focus-visible {
+  outline: 2px solid #1d4ed8;
+  outline-offset: 2px;
+}
+
+.dark :focus-visible {
+  outline-color: #93c5fd;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

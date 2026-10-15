@@ -1,6 +1,16 @@
 import { useState } from 'react'
 import { sampleHtml } from '../utils/sampleHtml'
 
+const focusRing =
+    'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-blue-300 dark:focus-visible:ring-offset-gray-950'
+
+const primaryBtn = `rounded-lg border border-transparent bg-blue-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 ${focusRing}`
+
+const secondaryBtn = `rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 ${focusRing}`
+
+const fieldClass =
+    'w-full rounded-lg border border-gray-400 bg-white p-3 text-sm shadow-sm focus:border-blue-700 focus:outline-hidden focus:ring-2 focus:ring-blue-700 dark:border-gray-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-blue-300 dark:focus:ring-blue-300'
+
 function InputPanel({ onScan, disabled }) {
     const [mode, setMode] = useState('url')
     const [html, setHtml] = useState('')
@@ -9,19 +19,25 @@ function InputPanel({ onScan, disabled }) {
 
     const value = mode === 'url' ? url : html
     const isEmpty = value.trim() === ''
+    const canScan = !isEmpty && !disabled
 
-    function handleScan() {
+    function handleSubmit(e) {
+        e.preventDefault()
+        if (!canScan) return
         onScan({ source: mode, value, wantsAI })
     }
 
-    const primaryBtn =
-        'rounded-lg border border-transparent bg-blue-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:focus:ring-offset-gray-900'
-
-    const secondaryBtn =
-        'rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:ring-offset-gray-900'
+    function handleClear() {
+        if (mode === 'url') setUrl('')
+        else setHtml('')
+    }
 
     return (
-        <div className="space-y-4 text-gray-900 dark:text-gray-100">
+        <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="space-y-4 text-gray-900 dark:text-gray-100"
+        >
             <div role="group" aria-label="Input type" className="flex gap-2">
                 <button
                     type="button"
@@ -49,15 +65,21 @@ function InputPanel({ onScan, disabled }) {
                     <input
                         id="url-input"
                         type="text"
+                        inputMode="url"
+                        autoComplete="off"
+                        autoCapitalize="none"
+                        spellCheck={false}
+                        maxLength={2048}
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
                         placeholder="https://example.com"
-                        className="w-full rounded-lg border border-gray-300 bg-white p-3 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                        className={fieldClass}
                         aria-describedby="url-note"
                     />
-                    <p id="url-note" className="text-xs text-gray-600 dark:text-gray-400">
+                    <p id="url-note" className="text-xs text-gray-700 dark:text-gray-300">
                         Works best on static pages. Pages built with JavaScript, pages that need a
-                        login, and sites that block bots may give incomplete results.
+                        login, and sites that block bots may give incomplete results. Press Enter
+                        to scan.
                     </p>
                 </div>
             ) : (
@@ -73,28 +95,27 @@ function InputPanel({ onScan, disabled }) {
                         maxLength={200000}
                         placeholder="<img src='logo.png'>"
                         spellCheck={false}
-                        className="w-full rounded-lg border border-gray-300 bg-white p-3 font-mono text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-blue-400 dark:focus:ring-blue-400"
+                        className={`${fieldClass} font-mono`}
                     />
                 </div>
             )}
 
             <div className="flex flex-wrap gap-2 pt-1">
-                <button
-                    type="button"
-                    onClick={handleScan}
-                    disabled={isEmpty || disabled}
-                    className={primaryBtn}
-                >
+                <button type="submit" disabled={!canScan} className={primaryBtn}>
                     Scan
                 </button>
                 {mode === 'html' && (
-                    <button type="button" onClick={() => setHtml(sampleHtml)} className={secondaryBtn}>
+                    <button
+                        type="button"
+                        onClick={() => setHtml(sampleHtml)}
+                        className={secondaryBtn}
+                    >
                         Load sample HTML
                     </button>
                 )}
                 <button
                     type="button"
-                    onClick={() => (mode === 'url' ? setUrl('') : setHtml(''))}
+                    onClick={handleClear}
                     disabled={isEmpty}
                     className={secondaryBtn}
                 >
@@ -103,22 +124,22 @@ function InputPanel({ onScan, disabled }) {
             </div>
 
             <div className="pt-2">
-                <label className="flex items-start gap-3 cursor-pointer">
+                <label className="flex cursor-pointer items-start gap-3">
                     <input
                         type="checkbox"
                         checked={wantsAI}
                         onChange={(e) => setWantsAI(e.target.checked)}
                         aria-describedby="ai-notice"
-                        className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
+                        className={`mt-1 h-4 w-4 cursor-pointer accent-blue-700 ${focusRing}`}
                     />
                     <span className="text-sm font-medium">Generate AI explanations</span>
                 </label>
-                <p id="ai-notice" className="ml-7 mt-1 text-xs text-gray-600 dark:text-gray-400">
+                <p id="ai-notice" className="ml-7 mt-1 text-xs text-gray-700 dark:text-gray-300">
                     If checked, up to 3 broken HTML snippets per issue are sent to an AI service
                     (Google Gemini). If unchecked, no scan data is sent to any AI service.
                 </p>
             </div>
-        </div>
+        </form>
     )
 }
 

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState, useEffect } from "react"
 import InputPanel from "./components/InputPanel"
 import SandboxRenderer from "./components/SandboxRenderer"
 import { scanHtml } from "./utils/scanHtml"
@@ -21,6 +21,7 @@ function App() {
   const [explanations, setExplanations] = useState({});
   const [aiError, setAiError] = useState(null);
   const [aiEnabled, setAiEnabled] = useState(false);
+  const resultRef = useRef(null);
 
   async function handleScan({ source, value, wantsAI }) {
     setHasScanned(true)
@@ -78,6 +79,11 @@ function App() {
   const score = calculateScore(violations)
   const showResults = hasScanned && !isScanning && !scanError
 
+  useEffect(() => {
+    if (showResults)
+      resultRef.current?.focus()
+  }, [showResults])
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-950 transition-colors duration-200 dark:bg-gray-950 dark:text-gray-50">
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
@@ -109,7 +115,7 @@ function App() {
           )}
           <section aria-labelledby="results-heading" className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 id="results-heading" className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h2 id="results-heading" ref={resultRef} tabIndex={-1} className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                 Audit Results
               </h2>
             </div>
