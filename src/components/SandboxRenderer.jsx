@@ -4,6 +4,11 @@ import DOMPurify from "dompurify";
 
 function SandboxRenderer({ html, onReady }) {
     const iframeRef = useRef(null);
+    const onReadyRef = useRef(onReady);
+
+    useEffect(() => {
+        onReadyRef.current = onReady
+    }, [onReady])
 
     useEffect(() => {
         if (!html) return;
@@ -22,7 +27,7 @@ function SandboxRenderer({ html, onReady }) {
         doc.write(htmlWithAxe);
         doc.close();
 
-        onReady(iframe);
+        onReadyRef.current(iframe)
     }, [html]);
 
     return (
